@@ -1,0 +1,66 @@
+# Low-Level Design: Static Website Server
+
+## 1. `main.py` - Web Server
+
+- **Objective:** Start a simple HTTP server to serve files from the `static` directory.
+
+- **Implementation Details:**
+    - Import the `http.server`, `socketserver`, and `os` modules.
+    - Define a constant `PORT` set to `8000`.
+    - Define a constant `STATIC_DIR` set to `static`.
+    - Create a `Handler` class that inherits from `http.server.SimpleHTTPRequestHandler`.
+    - In the main execution block (`if __name__ == "__main__":`):
+        - Use `os.chdir(STATIC_DIR)` to change the current directory to `static/`. This is a critical security step to prevent serving files from outside this directory.
+        - Create a `TCPServer` instance, binding it to `("", PORT)` and the `Handler`.
+        - Print a message to the console indicating the server is running and on which port.
+        - Call the `serve_forever()` method on the server instance to start it.
+
+## 2. `static/index.html`
+
+- **Objective:** The main HTML page.
+
+- **Content:**
+    - Standard HTML5 boilerplate (`<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`).
+    - A `<title>` tag with "Hello World App".
+    - A `<link>` tag in the `<head>` to include `style.css`.
+    - An `<h1>` tag in the `<body>` with the text "Hello World".
+    - A `<p>` tag with an ID (e.g., `js-message`) that will be populated by JavaScript.
+    - A `<script>` tag at the end of the `<body>` to include `script.js`.
+
+## 3. `static/style.css`
+
+- **Objective:** Basic styling for the page.
+
+- **Content:**
+    - A CSS rule for the `body` to set a background color and center the text.
+    - A CSS rule for the `h1` to set a color.
+
+## 4. `static/script.js`
+
+- **Objective:** Simple client-side script to demonstrate JS execution.
+
+- **Content:**
+    - An event listener for `DOMContentLoaded`.
+    - Inside the listener, select the `<p>` element by its ID.
+    - Set the `textContent` of the element to a message like "JavaScript is working!"
+
+## 5. Testing Plan
+
+- **Manual Testing:**
+    1. Run `python main.py`.
+    2. Open `http://localhost:8000` in a browser.
+    3. Verify "Hello World" is displayed.
+    4. Verify the styling from `style.css` is applied.
+    5. Verify the message from `script.js` is displayed.
+    6. Attempt to access `http://localhost:8000/../main.py` to confirm the directory traversal vulnerability is mitigated. The request should result in a 404 Not Found error.
+
+- **Automated Testing:**
+    - **Unit Tests:** Not applicable for this simple static file server as there is no complex business logic to test in isolation.
+    - **Integration Tests (`test_server.py`):**
+    - A test script will be created to run the server in a separate thread.
+    - It will use the **Selenium** library to control a headless web browser.
+    - It will navigate to the server's URL (`http://localhost:PORT`).
+    - It will assert that the `<h1>` title is correct.
+    - It will explicitly wait for the `p#js-message` element to be populated by JavaScript and assert that its content is correct. This verifies client-side script execution.
+    - It will test for the directory traversal vulnerability.
+    - The test will shut down the Selenium WebDriver and the server thread after completion.

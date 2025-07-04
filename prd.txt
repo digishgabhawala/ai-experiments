@@ -1,0 +1,39 @@
+# Product Requirements Document
+
+## Requirement-001: Define the Software Development Lifecycle (SDLC)
+
+**Objective:** Establish a standardized process for all development work to ensure quality, security, and clarity.
+
+**Details:**
+
+1.  **Requirement Analysis:**
+    - All new requirements must be clarified and assumptions confirmed before work begins.
+    - The finalized requirement shall be logged in this document (`prd.txt`).
+
+2.  **High-Level Design:**
+    - A `design.txt` file will be created to capture the high-level system design, including architecture and component interactions.
+    - Diagrams will be stored in text-based formats (e.g., ASCII, Mermaid).
+
+3.  **Low-Level Design:**
+    - A `lowlevel.txt` file will be created for detailed implementation plans, including function/class specifications.
+
+4.  **Implementation:**
+    - Code will be written based on the design documents.
+    - Guiding principles: Security-first, modularity, and a preference for Python.
+
+5.  **Testing:**
+    - A comprehensive test suite (unit, integration, automation) must be developed alongside the code.
+
+---
+
+## Requirement-002: Simple Static Website Server
+
+**Objective:** Enhance the application to serve a simple static website.
+
+**Details:**
+
+- The server must be implemented in Python using standard libraries.
+- It will serve files from a dedicated `static/` directory.
+- The website will consist of basic HTML, CSS, and JavaScript files.
+- The core function is to display a "Hello World" message.
+- The server will listen on port 8000.
