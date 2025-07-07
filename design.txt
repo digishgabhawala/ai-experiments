@@ -1,45 +1,47 @@
-# High-Level Design: Static Website Server
+# High-Level Design: Snake and Ladder Game
 
 ## 1. Overview
 
-The system will be a simple, single-process web server written in Python. It will serve static files (HTML, CSS, JS) from a designated directory to a client's web browser over HTTP.
+The system is a client-side, single-player web application that renders a playable Snake and Ladder game. The backend is a simple Python static file server that delivers the necessary HTML, CSS, and JavaScript files to the client's browser. The game logic and UI are managed entirely by JavaScript in the browser.
 
 ## 2. Components
 
-- **Web Server (`main.py`):** A Python script that starts an HTTP server. It will be configured to serve files from the `static/` directory.
-- **Static Content (`static/` directory):**
-    - `index.html`: The main entry point of the website.
-    - `style.css`: For basic styling.
-    - `script.js`: For client-side interactivity.
+- **Web Server (`main.py`):** A minimal Python HTTP server to serve the application files from the `static/` directory. Its role is purely to deliver the content and does not involve any game logic.
+- **Game Client (`static/` directory):**
+    - `index.html`: The main HTML document. It contains the structure for different game views (e.g., welcome screen, game board screen).
+    - `style.css`: Provides the styling for all UI elements, including the game board, player pieces, and different game states.
+    - `script.js`: The core of the application. It contains all the game logic, including managing game state (welcome, playing, win), handling user input (button clicks, dice rolls), and dynamically updating the DOM.
 
 ## 3. Architecture & Data Flow
 
-The architecture is a simple client-server model.
+The architecture is a simple static site model. The primary logic resides on the client.
 
 ```
-+----------+         HTTP Request         +--------------+
-|          | ---------------------------> |              |
-|  Client  |                              |  Web Server  |
-| (Browser)|         HTTP Response        |  (`main.py`) |
++----------+       HTTP Request for       +--------------+
+|          |      static assets (HTML,    |              |
+|  Client  |      CSS, JS)                |  Web Server  |
+| (Browser)| ---------------------------> |  (`main.py`) |
+|          |                              |              |
 |          | <--------------------------- |              |
-+----------+                              +-------+------+
-                                                  |
-                                                  | Serves files from
-                                                  v
-                                          +--------------+
-                                          | `static/`    |
-                                          |  directory   |
-                                          +--------------+
++----------+       HTTP Response          +-------+------+
+     |                                            |
+     | Renders Game, Handles Logic                | Serves files from
+     v                                            v
++---------------------------------+         +--------------+
+|                                 |         | `static/`    |
+|  Client-Side Application        |         |  directory   |
+|  (Manages UI and Game State)    |         +--------------+
+|                                 |
++---------------------------------+
 ```
 
-1.  The user starts the server by running `python main.py`.
-2.  The user opens a web browser and navigates to `http://localhost:8000`.
-3.  The browser sends an HTTP GET request for `/` to the server.
-4.  The server receives the request and, because it's for the root path, serves `static/index.html`.
-5.  The browser parses `index.html`, identifies the linked `style.css` and `script.js` files, and sends separate GET requests for them.
-6.  The server serves these files in response.
-7.  The browser renders the complete page.
+1.  The user starts the server (`python main.py`) and navigates to `http://localhost:8000`.
+2.  The server delivers `index.html`, `style.css`, and `script.js`.
+3.  The browser executes `script.js`, which initially renders the **Welcome Screen**.
+4.  The user interacts with the UI (e.g., clicks "Play").
+5.  JavaScript captures this event and updates the DOM to transition to the **Game Screen**, hiding the Welcome Screen.
+6.  All subsequent game logic (dice rolls, movement) is handled on the client-side.
 
 ## 4. Security Considerations
 
-- The server will use Python's `http.server` with `SimpleHTTPRequestHandler`. This handler has a known security risk: it can serve any file within the directory it's run from (and subdirectories). To mitigate this, we will explicitly change the server's working directory to `static/` before starting it. This ensures that only files within the `static/` directory can be served, preventing accidental exposure of source code or other project files.
+- The Python server's working directory is explicitly changed to `static/` before startup. This mitigates directory traversal attacks and ensures that only intended application files are exposed.

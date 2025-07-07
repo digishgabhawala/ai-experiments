@@ -37,3 +37,43 @@
 - The website will consist of basic HTML, CSS, and JavaScript files.
 - The core function is to display a "Hello World" message.
 - The server will listen on port 8000.
+
+---
+
+## Requirement-003: Snake and Ladder Game - MVP1
+
+**Objective:** Create a functional, single-player Snake and Ladder game.
+
+**User Stories:**
+
+*   **Story 1 (Welcome Screen):** As a user, I want to see a welcome screen with a "Play" button.
+*   **Story 2 (Starting the Game):** When I click "Play", the welcome screen is replaced by the game board.
+*   **Story 3 (The Board):** I want to see a game board with squares numbered 1 to 100.
+*   **Story 4 (Player Piece):** I want to have a distinct game piece on the board.
+*   **Story 5 (Turn Indication):** The UI should indicate when it's my turn to roll.
+*   **Story 6 (The Dice):** I want to roll a six-sided die and see the result clearly.
+*   **Story 7 (Player Movement):** My game piece moves forward according to the dice roll.
+*   **Story 8 (Snakes & Ladders):** My piece automatically moves up ladders and down snakes.
+*   **Story 9 (Exact Win Rule):** I must roll the exact number to land on 100; I cannot overshoot.
+*   **Story 10 (Winning Celebration):** When I win, I want to see a "Congratulations" message.
+*   **Story 11 (Play Again):** After winning, I should be returned to the welcome screen to play again.
+
+---
+
+## Requirement-004: Snake and Ladder Game - MVP2
+
+**Objective:** Enhance the game with multiplayer, better feedback, and replayability features.
+
+**User Stories:**
+
+*   **Story 1 (Two-Player Mode):** As a player, I want to be able to play against another person on the same device ("hot-seat" mode), so I can experience the game's competitive fun with a friend.
+*   **Story 2 (AI Opponent):** As a solo player, I want the option to play against a simple computer-controlled opponent, so I have a challenge even when playing by myself.
+*   **Story 3 (Defined Board Layout):** As a player, I want to play on a single, well-designed board with a fixed layout of snakes and ladders, ensuring a balanced and consistent game experience every time.
+*   **Story 4 (Piece Selection):** As a player, I want to choose my game piece's color or icon before the game starts, so I can personalize my experience.
+*   **Story 5 (Visual Feedback):** As a player, I want to see my piece animate smoothly from one square to the next, and see the dice perform a roll animation, to make the game feel more dynamic and alive.
+*   **Story 6 (Audio Feedback):** As a player, I want to hear simple sound effects when I roll the dice, land on a snake, or climb a ladder, to enhance the game's immersiveness.
+*   **Story 7 (Celebratory Win):** As a player who has won, I want to see a visually exciting celebration, like a confetti effect, to make my victory feel more rewarding.
+*   **Story 8 (Score Keeping):** As a player, I want the game to keep a simple score of how many wins each player (Player 1 vs. Player 2/AI) has, to encourage friendly competition and replay.
+*   **Story 9 (Instructions):** As a new user, I want to be able to view a "How to Play" section that explains the rules, especially the "must land exactly on 100" rule, so I can understand how to play correctly.
+*   **Story 10 (State Persistence):** As a player, if I accidentally refresh the page mid-game, I want the game to remember my current position, so I don't lose my progress.
+*   **Story 11 (Accessibility):** As a user who relies on a keyboard, I want to be able to start the game and roll the dice using only the keyboard (e.g., using the `Enter` or `Space` key), so the game is accessible to me.

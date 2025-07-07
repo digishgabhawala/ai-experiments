@@ -1,66 +1,49 @@
-# Low-Level Design: Static Website Server
+# Low-Level Design: Snake and Ladder Game
 
 ## 1. `main.py` - Web Server
-
 - **Objective:** Start a simple HTTP server to serve files from the `static` directory.
-
 - **Implementation Details:**
-    - Import the `http.server`, `socketserver`, and `os` modules.
-    - Define a constant `PORT` set to `8000`.
-    - Define a constant `STATIC_DIR` set to `static`.
-    - Create a `Handler` class that inherits from `http.server.SimpleHTTPRequestHandler`.
-    - In the main execution block (`if __name__ == "__main__":`):
-        - Use `os.chdir(STATIC_DIR)` to change the current directory to `static/`. This is a critical security step to prevent serving files from outside this directory.
-        - Create a `TCPServer` instance, binding it to `("", PORT)` and the `Handler`.
-        - Print a message to the console indicating the server is running and on which port.
-        - Call the `serve_forever()` method on the server instance to start it.
+    - No changes from the previous design. The server's role remains the same.
 
 ## 2. `static/index.html`
-
-- **Objective:** The main HTML page.
-
+- **Objective:** Provide the HTML structure for all game views.
 - **Content:**
-    - Standard HTML5 boilerplate (`<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`).
-    - A `<title>` tag with "Hello World App".
-    - A `<link>` tag in the `<head>` to include `style.css`.
-    - An `<h1>` tag in the `<body>` with the text "Hello World".
-    - A `<p>` tag with an ID (e.g., `js-message`) that will be populated by JavaScript.
-    - A `<script>` tag at the end of the `<body>` to include `script.js`.
+    - A main container `div` with an ID like `app`.
+    - Inside `#app`, two main `div` elements will exist:
+        - A "Welcome Screen" `div` with an ID like `welcome-screen`. It will be visible by default.
+            - An `h1` with the text "Snake and Ladder".
+            - A `button` with an ID like `play-button` and the text "Play".
+        - A "Game Screen" `div` with an ID like `game-screen`. It will be hidden by default using a CSS class (e.g., `hidden`).
+            - This will be populated with the game board and controls in later stories.
 
 ## 3. `static/style.css`
-
-- **Objective:** Basic styling for the page.
-
+- **Objective:** Style the different game views and UI elements.
 - **Content:**
-    - A CSS rule for the `body` to set a background color and center the text.
-    - A CSS rule for the `h1` to set a color.
+    - Basic styles for the `body` to center content.
+    - Styles for the `#welcome-screen` to format it as a distinct view.
+    - A utility class `.hidden` with the property `display: none;` to easily toggle the visibility of views.
 
 ## 4. `static/script.js`
-
-- **Objective:** Simple client-side script to demonstrate JS execution.
-
+- **Objective:** Manage UI transitions and initial game setup.
 - **Content:**
     - An event listener for `DOMContentLoaded`.
-    - Inside the listener, select the `<p>` element by its ID.
-    - Set the `textContent` of the element to a message like "JavaScript is working!"
+    - Inside the listener:
+        - Get references to the `#welcome-screen`, `#game-screen`, and `#play-button` elements.
+        - Add a `click` event listener to the `#play-button`.
+        - When the `#play-button` is clicked:
+            - Add the `hidden` class to the `#welcome-screen`.
+            - Remove the `hidden` class from the `#game-screen`.
 
 ## 5. Testing Plan
-
 - **Manual Testing:**
     1. Run `python main.py`.
-    2. Open `http://localhost:8000` in a browser.
-    3. Verify "Hello World" is displayed.
-    4. Verify the styling from `style.css` is applied.
-    5. Verify the message from `script.js` is displayed.
-    6. Attempt to access `http://localhost:8000/../main.py` to confirm the directory traversal vulnerability is mitigated. The request should result in a 404 Not Found error.
-
+    2. Open `http://localhost:8000`.
+    3. **Verify:** The "Snake and Ladder" title and the "Play" button are visible. The game board is not visible.
+    4. Click the "Play" button.
+    5. **Verify:** The welcome screen disappears, and the (currently empty) game screen container becomes visible.
 - **Automated Testing:**
-    - **Unit Tests:** Not applicable for this simple static file server as there is no complex business logic to test in isolation.
-    - **Integration Tests (`test_server.py`):**
-    - A test script will be created to run the server in a separate thread.
-    - It will use the **Selenium** library to control a headless web browser.
-    - It will navigate to the server's URL (`http://localhost:PORT`).
-    - It will assert that the `<h1>` title is correct.
-    - It will explicitly wait for the `p#js-message` element to be populated by JavaScript and assert that its content is correct. This verifies client-side script execution.
-    - It will test for the directory traversal vulnerability.
-    - The test will shut down the Selenium WebDriver and the server thread after completion.
+    - **UI Test (`test_game.py`):**
+        - A new test script will be created using Selenium.
+        - It will navigate to the page and verify the initial visibility of the welcome screen and the invisibility of the game screen.
+        - It will simulate a click on the `#play-button`.
+        - It will assert that the welcome screen is now hidden and the game screen is visible.
