@@ -34,6 +34,18 @@ class TestGameUI(unittest.TestCase):
         self.assertFalse(welcome_screen.is_displayed())
         self.assertTrue(game_screen.is_displayed())
 
+    def test_game_board_creation(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+
+        game_board = self.driver.find_element(By.ID, "game-board")
+        squares = game_board.find_elements(By.CLASS_NAME, "square")
+
+        self.assertEqual(len(squares), 100)
+        self.assertEqual(squares[0].text, "1")
+        self.assertEqual(squares[99].text, "100")
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()

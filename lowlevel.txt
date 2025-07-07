@@ -14,7 +14,7 @@
             - An `h1` with the text "Snake and Ladder".
             - A `button` with an ID like `play-button` and the text "Play".
         - A "Game Screen" `div` with an ID like `game-screen`. It will be hidden by default using a CSS class (e.g., `hidden`).
-            - This will be populated with the game board and controls in later stories.
+            - It will contain a `div` with an ID like `game-board`.
 
 ## 3. `static/style.css`
 - **Objective:** Style the different game views and UI elements.
@@ -22,6 +22,8 @@
     - Basic styles for the `body` to center content.
     - Styles for the `#welcome-screen` to format it as a distinct view.
     - A utility class `.hidden` with the property `display: none;` to easily toggle the visibility of views.
+    - Styles for the `#game-board` to create a 10x10 grid layout.
+    - Styles for the individual board squares (`.square`).
 
 ## 4. `static/script.js`
 - **Objective:** Manage UI transitions and initial game setup.
@@ -29,6 +31,8 @@
     - An event listener for `DOMContentLoaded`.
     - Inside the listener:
         - Get references to the `#welcome-screen`, `#game-screen`, and `#play-button` elements.
+        - **New:** Get a reference to the `#game-board` element.
+        - **New:** A function `createBoard()` will be called to generate the 100 squares of the board dynamically and append them to the `#game-board` element.
         - Add a `click` event listener to the `#play-button`.
         - When the `#play-button` is clicked:
             - Add the `hidden` class to the `#welcome-screen`.
@@ -38,12 +42,12 @@
 - **Manual Testing:**
     1. Run `python main.py`.
     2. Open `http://localhost:8000`.
-    3. **Verify:** The "Snake and Ladder" title and the "Play" button are visible. The game board is not visible.
-    4. Click the "Play" button.
-    5. **Verify:** The welcome screen disappears, and the (currently empty) game screen container becomes visible.
+    3. Click the "Play" button.
+    4. **Verify:** A 10x10 grid representing the game board is displayed.
+    5. **Verify:** The squares are numbered from 1 to 100.
 - **Automated Testing:**
     - **UI Test (`test_game.py`):**
-        - A new test script will be created using Selenium.
-        - It will navigate to the page and verify the initial visibility of the welcome screen and the invisibility of the game screen.
-        - It will simulate a click on the `#play-button`.
-        - It will assert that the welcome screen is now hidden and the game screen is visible.
+        - A new test will be added to `test_game.py`.
+        - It will click the "Play" button.
+        - It will then find the `#game-board` element.
+        - It will assert that the board contains 100 child elements (the squares).
