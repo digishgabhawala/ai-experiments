@@ -4,13 +4,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const playButton = document.getElementById('play-button');
     const gameBoard = document.getElementById('game-board');
 
+    let playerPosition = 1;
+
     function createBoard() {
         for (let i = 1; i <= 100; i++) {
             const square = document.createElement('div');
             square.classList.add('square');
+            square.dataset.square = i;
             square.textContent = i;
             gameBoard.appendChild(square);
         }
+        placePlayer();
+    }
+
+    function placePlayer() {
+        const currentSquare = document.querySelector(`[data-square="${playerPosition}"]`);
+        const playerPiece = document.createElement('div');
+        playerPiece.classList.add('player-piece');
+        currentSquare.appendChild(playerPiece);
     }
 
     playButton.addEventListener('click', () => {

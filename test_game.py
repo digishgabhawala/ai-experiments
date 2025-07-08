@@ -46,6 +46,16 @@ class TestGameUI(unittest.TestCase):
         self.assertEqual(squares[0].text, "1")
         self.assertEqual(squares[99].text, "100")
 
+    def test_player_piece_initial_position(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+
+        first_square = self.driver.find_element(By.CSS_SELECTOR, "[data-square='1']")
+        player_piece = first_square.find_element(By.CLASS_NAME, "player-piece")
+
+        self.assertTrue(player_piece.is_displayed())
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()

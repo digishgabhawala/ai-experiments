@@ -29,4 +29,13 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 1.2em;
+    position: relative;
+}
+
+.player-piece {
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
 }

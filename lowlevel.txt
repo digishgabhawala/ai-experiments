@@ -24,15 +24,18 @@
     - A utility class `.hidden` with the property `display: none;` to easily toggle the visibility of views.
     - Styles for the `#game-board` to create a 10x10 grid layout.
     - Styles for the individual board squares (`.square`).
+    - **New:** Styles for the player piece (`.player-piece`).
 
 ## 4. `static/script.js`
 - **Objective:** Manage UI transitions and initial game setup.
 - **Content:**
+    - A variable `playerPosition` will be added to track the player's current square, initialized to 1.
+    - The `createBoard()` function will be modified. After creating the squares, it will create a `div` for the player piece, add a `.player-piece` class to it, and append it to the first square on the board.
     - An event listener for `DOMContentLoaded`.
     - Inside the listener:
         - Get references to the `#welcome-screen`, `#game-screen`, and `#play-button` elements.
-        - **New:** Get a reference to the `#game-board` element.
-        - **New:** A function `createBoard()` will be called to generate the 100 squares of the board dynamically and append them to the `#game-board` element.
+        - Get a reference to the `#game-board` element.
+        - A function `createBoard()` will be called to generate the 100 squares of the board dynamically and append them to the `#game-board` element.
         - Add a `click` event listener to the `#play-button`.
         - When the `#play-button` is clicked:
             - Add the `hidden` class to the `#welcome-screen`.
@@ -45,9 +48,12 @@
     3. Click the "Play" button.
     4. **Verify:** A 10x10 grid representing the game board is displayed.
     5. **Verify:** The squares are numbered from 1 to 100.
+    6. **Verify:** A distinct player piece (e.g., a colored circle) is visible on the first square of the board.
 - **Automated Testing:**
     - **UI Test (`test_game.py`):**
         - A new test will be added to `test_game.py`.
         - It will click the "Play" button.
-        - It will then find the `#game-board` element.
-        - It will assert that the board contains 100 child elements (the squares).
+        - It will then find the `#game-board` element and assert that it contains 100 squares.
+        - A new test will be added to verify the player piece.
+        - After clicking "Play", it will find the first square on the board.
+        - It will assert that this square contains a child element with the class `.player-piece`.
