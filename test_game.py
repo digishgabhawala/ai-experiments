@@ -70,6 +70,21 @@ class TestGameUI(unittest.TestCase):
         self.assertTrue(turn_indicator.is_displayed())
         self.assertEqual(turn_indicator.text, "Your Turn")
 
+    def test_dice_roll_display(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+        time.sleep(1)
+
+        roll_dice_button = self.driver.find_element(By.ID, "roll-dice-button")
+        roll_dice_button.click()
+        time.sleep(1)
+
+        turn_indicator = self.driver.find_element(By.ID, "turn-indicator")
+        self.assertTrue(turn_indicator.is_displayed())
+        # Check if the text contains "You rolled a " and a number between 1 and 6
+        self.assertRegex(turn_indicator.text, r"^You rolled a (1|2|3|4|5|6)!$")
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()

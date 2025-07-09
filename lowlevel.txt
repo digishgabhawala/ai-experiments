@@ -15,6 +15,9 @@
             - A `button` with an ID like `play-button` and the text "Play".
         - A "Game Screen" `div` with an ID like `game-screen`. It will be hidden by default using a CSS class (e.g., `hidden`).
             - It will contain a `div` with an ID like `game-board`.
+            - Inside `#game-screen`:
+                - A `div` with an ID like `turn-indicator` (already implemented).
+                - A `button` with an ID like `roll-dice-button` and the text "Roll Dice".
 
 ## 3. `static/style.css`
 - **Objective:** Style the different game views and UI elements.
@@ -25,9 +28,11 @@
     - Styles for the `#game-board` to create a 10x10 grid layout.
     - Styles for the individual board squares (`.square`).
     - **New:** Styles for the player piece (`.player-piece`).
+    - Styles for the `#turn-indicator` (already implemented).
+    - Basic styling for `#roll-dice-button` to make it visually distinct.
 
 ## 4. `static/script.js`
-- **Objective:** Manage UI transitions and initial game setup.
+- **Objective:** Manage UI transitions, initial game setup, and dice roll logic.
 - **Content:**
     - A variable `playerPosition` will be added to track the player's current square, initialized to 1.
     - The `createBoard()` function will be modified. After creating the squares, it will create a `div` for the player piece, add a `.player-piece` class to it, and append it to the first square on the board.
@@ -40,6 +45,11 @@
         - When the `#play-button` is clicked:
             - Add the `hidden` class to the `#welcome-screen`.
             - Remove the `hidden` class from the `#game-screen`.
+        - Get a reference to the `#roll-dice-button`.
+        - Add a `click` event listener to `#roll-dice-button`.
+        - Inside the event listener:
+            - Generate a random integer between 1 and 6 (inclusive) to simulate a dice roll.
+            - Update the `textContent` of the `#turn-indicator` to display the dice roll result (e.g., "You rolled a 5!").
 
 ## 5. Testing Plan
 - **Manual Testing:**
@@ -49,6 +59,8 @@
     4. **Verify:** A 10x10 grid representing the game board is displayed.
     5. **Verify:** The squares are numbered from 1 to 100.
     6. **Verify:** A distinct player piece (e.g., a colored circle) is visible on the first square of the board.
+    7. **Verify:** A "Roll Dice" button is visible on the game screen.
+    8. **Verify:** Clicking the "Roll Dice" button displays a random number between 1 and 6 in the turn indicator.
 - **Automated Testing:**
     - **UI Test (`test_game.py`):**
         - A new test will be added to `test_game.py`.
@@ -57,3 +69,8 @@
         - A new test will be added to verify the player piece.
         - After clicking "Play", it will find the first square on the board.
         - It will assert that this square contains a child element with the class `.player-piece`.
+        - Add a new test case `test_dice_roll_display`.
+        - This test will:
+            - Navigate to the game and click the "Play" button.
+            - Find the "Roll Dice" button and click it.
+            - Assert that the `#turn-indicator` is displayed and its text content is a valid dice roll message (e.g., contains "You rolled a " and a number between 1 and 6).

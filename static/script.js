@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const turnIndicator = document.getElementById('turn-indicator');
     const playButton = document.getElementById('play-button');
     const gameBoard = document.getElementById('game-board');
+    const rollDiceButton = document.getElementById('roll-dice-button');
 
     let playerPosition = 1;
 
@@ -29,6 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
         gameScreen.classList.remove('hidden');
         turnIndicator.textContent = "Your Turn";
         placePlayer();
+    });
+
+    rollDiceButton.addEventListener('click', () => {
+        const diceRoll = Math.floor(Math.random() * 6) + 1;
+        turnIndicator.textContent = `You rolled a ${diceRoll}!`;
     });
 
     createBoard();
