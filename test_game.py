@@ -234,6 +234,43 @@ class TestGameUI(unittest.TestCase):
         self.assertTrue(winning_celebration_screen.is_displayed())
         self.assertFalse(game_screen.is_displayed())
 
+    def test_play_again_button(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+        time.sleep(1)
+
+        # Manually set playerPosition to 99 to trigger win condition
+        self.driver.execute_script("playerPosition = 99;")
+        self.driver.execute_script("document.querySelector('.player-piece').remove();")
+        self.driver.execute_script("placePlayer();")
+        time.sleep(1)
+
+        # Simulate a dice roll of 1 to reach 100
+        self.driver.execute_script("const diceRoll = 1; turnIndicator.textContent = `You rolled a ${diceRoll}!`; let newPosition = playerPosition + diceRoll; if (newPosition > 100) { newPosition = playerPosition; } const currentPlayerPiece = document.querySelector('.player-piece'); if (currentPlayerPiece) { currentPlayerPiece.remove(); } playerPosition = newPosition; placePlayer();")
+        time.sleep(1)
+
+        # Check for win condition
+        self.driver.execute_script("if (playerPosition === 100) { gameScreen.classList.add('hidden'); winningCelebration.classList.remove('hidden'); }")
+        time.sleep(1)
+
+        # Click the Play Again button
+        play_again_button = self.driver.find_element(By.ID, "play-again-button")
+        play_again_button.click()
+        time.sleep(1)
+
+        # Assert that the welcome screen is displayed and game screen is hidden
+        welcome_screen = self.driver.find_element(By.ID, "welcome-screen")
+        game_screen = self.driver.find_element(By.ID, "game-screen")
+
+        self.assertTrue(welcome_screen.is_displayed())
+        self.assertFalse(game_screen.is_displayed())
+
+        # Assert player piece is reset to square 1
+        first_square = self.driver.find_element(By.CSS_SELECTOR, "[data-square='1']")
+        # The player piece should be displayed on the first square after reset
+        self.assertTrue(first_square.find_elements(By.CLASS_NAME, "player-piece"))
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()

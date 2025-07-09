@@ -7,6 +7,7 @@ let gameBoard;
 let rollDiceButton;
 let gameLinesSvg;
 let winningCelebration;
+let playAgainButton;
 
 const SNAKES_AND_LADDERS = [
     { start: 16, end: 6, type: 'snake' },
@@ -32,8 +33,14 @@ const SNAKES_AND_LADDERS = [
 
 function placePlayer() {
     const currentSquare = document.querySelector(`[data-square="${playerPosition}"]`);
-    const playerPiece = document.createElement('div');
-    playerPiece.classList.add('player-piece');
+    let playerPiece = document.querySelector('.player-piece'); // Try to find existing piece
+
+    if (!playerPiece) { // If no piece exists, create one
+        playerPiece = document.createElement('div');
+        playerPiece.classList.add('player-piece');
+    } else { // If piece exists, remove from old parent
+        playerPiece.remove();
+    }
     currentSquare.appendChild(playerPiece);
 }
 
@@ -73,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rollDiceButton = document.getElementById('roll-dice-button');
     gameLinesSvg = document.getElementById('game-lines');
     winningCelebration = document.getElementById('winning-celebration');
+    playAgainButton = document.getElementById('play-again-button');
 
     function createBoard() {
         for (let i = 1; i <= 100; i++) {
@@ -84,12 +92,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function resetGame() {
+        playerPosition = 1;
+        placePlayer(); // Place player on square 1
+        winningCelebration.classList.add('hidden');
+        welcomeScreen.classList.remove('hidden');
+    }
+
     playButton.addEventListener('click', () => {
         welcomeScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
         turnIndicator.textContent = "Your Turn";
         placePlayer();
         drawSnakeLadderLines();
+    });
+
+    playAgainButton.addEventListener('click', () => {
+        resetGame();
     });
 
     rollDiceButton.addEventListener('click', () => {
@@ -100,12 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (newPosition > 100) {
             newPosition = playerPosition; // Player remains at current position if roll overshoots 100
-        }
-
-        // Remove player piece from current square
-        const currentPlayerPiece = document.querySelector('.player-piece');
-        if (currentPlayerPiece) {
-            currentPlayerPiece.remove();
         }
 
         playerPosition = newPosition;

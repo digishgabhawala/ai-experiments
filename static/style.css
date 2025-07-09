@@ -72,3 +72,11 @@ body {
     color: green;
     font-weight: bold;
 }
+
+#play-again-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+}

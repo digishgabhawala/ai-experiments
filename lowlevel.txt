@@ -144,9 +144,19 @@
 - **`static/index.html` changes:**
     - Add a new `div` with an ID like `winning-celebration` inside the `#app` container, initially hidden.
         - It will contain an `h1` with the text "Congratulations! You Won!".
+        - Add a `button` with an ID like `play-again-button` and the text "Play Again".
 - **`static/style.css` changes:**
     - Add styles for `#winning-celebration` to center the content and make it visually prominent.
+    - Add styles for `#play-again-button`.
 - **`static/script.js` changes:**
     - In the `rollDiceButton` event listener, after updating `playerPosition` and moving the player piece:
         - Check if `playerPosition` is equal to 100.
         - If true, add the `hidden` class to `#game-screen` and remove the `hidden` class from `#winning-celebration`.
+    - Add a new function `resetGame()`:
+        - Reset `playerPosition` to 1.
+        - Remove the existing player piece from the board.
+        - Hide the `#winning-celebration` screen.
+        - Show the `#welcome-screen`.
+        - Clear the `game-board` and redraw it (or re-initialize it).
+        - Clear the `game-lines` SVG and redraw them.
+    - Add a `click` event listener to `#play-again-button` that calls `resetGame()`.
