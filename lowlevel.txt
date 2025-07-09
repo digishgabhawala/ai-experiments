@@ -132,3 +132,21 @@
             - Assert that the `#game-lines` SVG element exists.
             - Assert that the correct number of `<line>` elements are present within `#game-lines`.
             - Assert that the `stroke` color of these lines corresponds to their type (snake/ladder).
+
+        - Add `test_winning_celebration` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to 99.
+            - Simulate a dice roll of 1.
+            - Assert that the `#winning-celebration` screen is displayed.
+
+## 6. Winning Celebration
+- **Objective:** Display a congratulatory message when the player reaches square 100.
+- **`static/index.html` changes:**
+    - Add a new `div` with an ID like `winning-celebration` inside the `#app` container, initially hidden.
+        - It will contain an `h1` with the text "Congratulations! You Won!".
+- **`static/style.css` changes:**
+    - Add styles for `#winning-celebration` to center the content and make it visually prominent.
+- **`static/script.js` changes:**
+    - In the `rollDiceButton` event listener, after updating `playerPosition` and moving the player piece:
+        - Check if `playerPosition` is equal to 100.
+        - If true, add the `hidden` class to `#game-screen` and remove the `hidden` class from `#winning-celebration`.

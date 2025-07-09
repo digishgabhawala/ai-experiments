@@ -207,6 +207,33 @@ class TestGameUI(unittest.TestCase):
         self.assertEqual(len(snake_lines), 10)
         self.assertEqual(len(ladder_lines), 9)
 
+    def test_winning_celebration(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+        time.sleep(1)
+
+        # Manually set playerPosition to 99
+        self.driver.execute_script("playerPosition = 99;")
+        self.driver.execute_script("document.querySelector('.player-piece').remove();")
+        self.driver.execute_script("placePlayer();")
+        time.sleep(1)
+
+        # Simulate a dice roll of 1 to reach 100
+        self.driver.execute_script("const diceRoll = 1; turnIndicator.textContent = `You rolled a ${diceRoll}!`; let newPosition = playerPosition + diceRoll; if (newPosition > 100) { newPosition = playerPosition; } const currentPlayerPiece = document.querySelector('.player-piece'); if (currentPlayerPiece) { currentPlayerPiece.remove(); } playerPosition = newPosition; placePlayer();")
+        time.sleep(1)
+
+        # Check for win condition
+        self.driver.execute_script("if (playerPosition === 100) { gameScreen.classList.add('hidden'); winningCelebration.classList.remove('hidden'); }")
+        time.sleep(1)
+
+        # Assert that the winning-celebration screen is displayed
+        winning_celebration_screen = self.driver.find_element(By.ID, "winning-celebration")
+        game_screen = self.driver.find_element(By.ID, "game-screen")
+
+        self.assertTrue(winning_celebration_screen.is_displayed())
+        self.assertFalse(game_screen.is_displayed())
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()

@@ -6,6 +6,7 @@ let playButton;
 let gameBoard;
 let rollDiceButton;
 let gameLinesSvg;
+let winningCelebration;
 
 const SNAKES_AND_LADDERS = [
     { start: 16, end: 6, type: 'snake' },
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameBoard = document.getElementById('game-board');
     rollDiceButton = document.getElementById('roll-dice-button');
     gameLinesSvg = document.getElementById('game-lines');
+    winningCelebration = document.getElementById('winning-celebration');
 
     function createBoard() {
         for (let i = 1; i <= 100; i++) {
@@ -115,6 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         placePlayer();
+
+        // Check for win condition
+        if (playerPosition === 100) {
+            gameScreen.classList.add('hidden');
+            winningCelebration.classList.remove('hidden');
+        }
     });
 
     createBoard();
