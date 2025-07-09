@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World App</title>
+    <title>Snake and Ladder</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hello World</h1>
-    <p id="js-message"></p>
+    <div id="app">
+        <div id="welcome-screen">
+            <h1>Snake and Ladder</h1>
+            <button id="play-button">Play</button>
+        </div>
+        <div id="game-screen" class="hidden">
+            <div id="game-board">
+                <svg id="game-lines" class="game-lines-svg"></svg>
+            </div>
+            <div id="turn-indicator"></div>
+            <button id="roll-dice-button">Roll Dice</button>
+        </div>
+
+        <div id="winning-celebration" class="hidden">
+            <h1>Congratulations! You Won!</h1>
+            <button id="play-again-button">Play Again</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

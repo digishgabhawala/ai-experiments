@@ -1,66 +1,162 @@
-# Low-Level Design: Static Website Server
+# Low-Level Design: Snake and Ladder Game
 
 ## 1. `main.py` - Web Server
-
 - **Objective:** Start a simple HTTP server to serve files from the `static` directory.
-
 - **Implementation Details:**
-    - Import the `http.server`, `socketserver`, and `os` modules.
-    - Define a constant `PORT` set to `8000`.
-    - Define a constant `STATIC_DIR` set to `static`.
-    - Create a `Handler` class that inherits from `http.server.SimpleHTTPRequestHandler`.
-    - In the main execution block (`if __name__ == "__main__":`):
-        - Use `os.chdir(STATIC_DIR)` to change the current directory to `static/`. This is a critical security step to prevent serving files from outside this directory.
-        - Create a `TCPServer` instance, binding it to `("", PORT)` and the `Handler`.
-        - Print a message to the console indicating the server is running and on which port.
-        - Call the `serve_forever()` method on the server instance to start it.
+    - No changes from the previous design. The server's role remains the same.
 
 ## 2. `static/index.html`
-
-- **Objective:** The main HTML page.
-
+- **Objective:** Provide the HTML structure for all game views.
 - **Content:**
-    - Standard HTML5 boilerplate (`<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`).
-    - A `<title>` tag with "Hello World App".
-    - A `<link>` tag in the `<head>` to include `style.css`.
-    - An `<h1>` tag in the `<body>` with the text "Hello World".
-    - A `<p>` tag with an ID (e.g., `js-message`) that will be populated by JavaScript.
-    - A `<script>` tag at the end of the `<body>` to include `script.js`.
+    - A main container `div` with an ID like `app`.
+    - Inside `#app`, two main `div` elements will exist:
+        - A "Welcome Screen" `div` with an ID like `welcome-screen`. It will be visible by default.
+            - An `h1` with the text "Snake and Ladder".
+            - A `button` with an ID like `play-button` and the text "Play".
+        - A "Game Screen" `div` with an ID like `game-screen`. It will be hidden by default using a CSS class (e.g., `hidden`).
+            - It will contain a `div` with an ID like `game-board`.
+            - Inside `#game-screen`:
+                - A `div` with an ID like `turn-indicator` (already implemented).
+                - A `button` with an ID like `roll-dice-button` and the text "Roll Dice".
+                - An `<svg>` element with `id="game-lines"` to draw snake and ladder paths. It should be positioned absolutely over the game board with `pointer-events: none;`.
 
 ## 3. `static/style.css`
-
-- **Objective:** Basic styling for the page.
-
+- **Objective:** Style the different game views and UI elements.
 - **Content:**
-    - A CSS rule for the `body` to set a background color and center the text.
-    - A CSS rule for the `h1` to set a color.
+    - Basic styles for the `body` to center content.
+    - Styles for the `#welcome-screen` to format it as a distinct view.
+    - A utility class `.hidden` with the property `display: none;` to easily toggle the visibility of views.
+    - Styles for the `#game-board` to create a 10x10 grid layout.
+    - Styles for the individual board squares (`.square`).
+    - **New:** Styles for the player piece (`.player-piece`).
+    - Styles for the `#turn-indicator` (already implemented).
+    - Basic styling for `#roll-dice-button` to make it visually distinct.
+    - Basic styling for the `#game-lines` SVG container if needed.
 
 ## 4. `static/script.js`
-
-- **Objective:** Simple client-side script to demonstrate JS execution.
-
+- **Objective:** Manage UI transitions, initial game setup, dice roll logic, player movement, and snake/ladder logic.
 - **Content:**
+    - A variable `playerPosition` will be added to track the player's current square, initialized to 1.
+    - The `createBoard()` function will be modified. After creating the squares, it will create a `div` for the player piece, add a `.player-piece` class to it, and append it to the first square on the board.
     - An event listener for `DOMContentLoaded`.
-    - Inside the listener, select the `<p>` element by its ID.
-    - Set the `textContent` of the element to a message like "JavaScript is working!"
+    - Inside the listener:
+        - Get references to the `#welcome-screen`, `#game-screen`, and `#play-button` elements.
+        - Get a reference to the `#game-board` element.
+        - A function `createBoard()` will be called to generate the 100 squares of the board dynamically and append them to the `#game-board` element.
+        - Add a `click` event listener to the `#play-button`.
+        - When the `#play-button` is clicked:
+            - Add the `hidden` class to the `#welcome-screen`.
+            - Remove the `hidden` class from the `#game-screen`.
+        - Get a reference to the `#roll-dice-button`.
+        - Add a `click` event listener to `#roll-dice-button`.
+        - Inside the event listener:
+            - Generate a random integer between 1 and 6 (inclusive) to simulate a dice roll.
+            - Update the `textContent` of the `#turn-indicator` to display the dice roll result (e.g., "You rolled a 5!").
+            - Update `playerPosition` by adding the `diceRoll`.
+            - Implement a `movePlayer()` function to:
+                - Remove the `player-piece` from its current square.
+                - Find the new target square based on `playerPosition`.
+                - Append the `player-piece` to the new target square.
+                - Handle `playerPosition` exceeding 100: If `playerPosition` + `diceRoll` > 100, the player remains at the current `playerPosition`.
+            - Call `movePlayer()` after updating `playerPosition`.
+    - Define a `SNAKES_AND_LADDERS` constant (e.g., a JavaScript array of objects) that maps starting squares to ending squares, and includes a `type` property (`'snake'` or `'ladder'`).
+    - Modify the `createBoard()` function:
+        - After creating the squares, iterate through `SNAKES_AND_LADDERS`.
+        - For each snake/ladder:
+            - Get the pixel coordinates (top-left corner, width, height) of the `start` and `end` squares.
+            - Create an SVG `<line>` element.
+            - Set its `x1`, `y1`, `x2`, `y2` attributes to connect the center of the start square to the center of the end square.
+            - Apply a `stroke` color (e.g., red for snakes, green for ladders) and `stroke-width`.
+            - Append the SVG element to the `#game-lines` SVG container.
+    - Modify the `rollDiceButton` event listener (or `movePlayer` function):
+        - After updating `playerPosition` based on the dice roll, check if the new `playerPosition` is a `start` square in `SNAKES_AND_LADDERS`.
+        - If it is, update `playerPosition` to the corresponding `end` square.
+        - Visually move the player piece to the new square (re-use `placePlayer` logic).
 
 ## 5. Testing Plan
-
 - **Manual Testing:**
     1. Run `python main.py`.
-    2. Open `http://localhost:8000` in a browser.
-    3. Verify "Hello World" is displayed.
-    4. Verify the styling from `style.css` is applied.
-    5. Verify the message from `script.js` is displayed.
-    6. Attempt to access `http://localhost:8000/../main.py` to confirm the directory traversal vulnerability is mitigated. The request should result in a 404 Not Found error.
-
+    2. Open `http://localhost:8000`.
+    3. Click the "Play" button.
+    4. **Verify:** A 10x10 grid representing the game board is displayed.
+    5. **Verify:** The squares are numbered from 1 to 100.
+    6. **Verify:** A distinct player piece (e.g., a colored circle) is visible on the first square of the board.
+    7. **Verify:** A "Roll Dice" button is visible on the game screen.
+    8. **Verify:** Clicking the "Roll Dice" button displays a random number between 1 and 6 in the turn indicator.
+    9. **Verify:** After rolling the dice, the player piece moves forward by the rolled number of squares.
+    10. **Verify:** If the player is at square 98 and rolls a 2, the player piece lands exactly on square 100.
+    11. **Verify:** If the player is at square 98 and rolls a 4, the player piece remains at square 98 (does not overshoot 100).
+    12. **Verify:** Snakes and ladders are visually represented on the board as lines connecting their start and end squares (e.g., red lines for snakes, green lines for ladders).
+    13. **Verify:** When landing on a snake's head, the player piece automatically moves to its tail.
+    14. **Verify:** When landing on a ladder's base, the player piece automatically moves to its top.
 - **Automated Testing:**
-    - **Unit Tests:** Not applicable for this simple static file server as there is no complex business logic to test in isolation.
-    - **Integration Tests (`test_server.py`):**
-    - A test script will be created to run the server in a separate thread.
-    - It will use the **Selenium** library to control a headless web browser.
-    - It will navigate to the server's URL (`http://localhost:PORT`).
-    - It will assert that the `<h1>` title is correct.
-    - It will explicitly wait for the `p#js-message` element to be populated by JavaScript and assert that its content is correct. This verifies client-side script execution.
-    - It will test for the directory traversal vulnerability.
-    - The test will shut down the Selenium WebDriver and the server thread after completion.
+    - **UI Test (`test_game.py`):**
+        - A new test will be added to `test_game.py`.
+        - It will click the "Play" button.
+        - It will then find the `#game-board` element and assert that it contains 100 squares.
+        - A new test will be added to verify the player piece.
+        - After clicking "Play", it will find the first square on the board.
+        - It will assert that this square contains a child element with the class `.player-piece`.
+        - Add a new test case `test_dice_roll_display`.
+        - This test will:
+            - Navigate to the game and click the "Play" button.
+            - Find the "Roll Dice" button and click it.
+            - Assert that the `#turn-indicator` is displayed and its text content is a valid dice roll message (e.g., contains "You rolled a " and a number between 1 and 6).
+        - Add a new test case `test_player_movement_after_roll`.
+        - This test will:
+            - Navigate to game, click "Play".
+            - Click "Roll Dice".
+            - Get initial `playerPosition`.
+            - Simulate/read `diceRoll`.
+            - Calculate expected new position.
+            - Assert `player-piece` is in the expected new square.
+        - Add `test_player_movement_exact_win_rule` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to 98 (or a similar high value).
+            - Simulate a dice roll that would land exactly on 100 (e.g., 2).
+            - Assert `player-piece` is at square 100.
+            - Simulate a dice roll that would overshoot 100 (e.g., 4).
+            - Assert `player-piece` remains at the position before the roll (98 in this example).
+        - Add `test_snake_movement` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to a snake start square.
+            - Simulate a dice roll that lands on the snake start.
+            - Assert `player-piece` is at the snake end square.
+        - Add `test_ladder_movement` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to a ladder start square.
+            - Simulate a dice roll that lands on the ladder start.
+            - Assert `player-piece` is at the ladder end square.
+        - Add `test_snake_ladder_visual_representation` to:
+            - Navigate to game, click "Play".
+            - Assert that the `#game-lines` SVG element exists.
+            - Assert that the correct number of `<line>` elements are present within `#game-lines`.
+            - Assert that the `stroke` color of these lines corresponds to their type (snake/ladder).
+
+        - Add `test_winning_celebration` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to 99.
+            - Simulate a dice roll of 1.
+            - Assert that the `#winning-celebration` screen is displayed.
+
+## 6. Winning Celebration
+- **Objective:** Display a congratulatory message when the player reaches square 100.
+- **`static/index.html` changes:**
+    - Add a new `div` with an ID like `winning-celebration` inside the `#app` container, initially hidden.
+        - It will contain an `h1` with the text "Congratulations! You Won!".
+        - Add a `button` with an ID like `play-again-button` and the text "Play Again".
+- **`static/style.css` changes:**
+    - Add styles for `#winning-celebration` to center the content and make it visually prominent.
+    - Add styles for `#play-again-button`.
+- **`static/script.js` changes:**
+    - In the `rollDiceButton` event listener, after updating `playerPosition` and moving the player piece:
+        - Check if `playerPosition` is equal to 100.
+        - If true, add the `hidden` class to `#game-screen` and remove the `hidden` class from `#winning-celebration`.
+    - Add a new function `resetGame()`:
+        - Reset `playerPosition` to 1.
+        - Remove the existing player piece from the board.
+        - Hide the `#winning-celebration` screen.
+        - Show the `#welcome-screen`.
+        - Clear the `game-board` and redraw it (or re-initialize it).
+        - Clear the `game-lines` SVG and redraw them.
+    - Add a `click` event listener to `#play-again-button` that calls `resetGame()`.
