@@ -18,6 +18,7 @@
             - Inside `#game-screen`:
                 - A `div` with an ID like `turn-indicator` (already implemented).
                 - A `button` with an ID like `roll-dice-button` and the text "Roll Dice".
+                - An `<svg>` element with `id="game-lines"` to draw snake and ladder paths. It should be positioned absolutely over the game board with `pointer-events: none;`.
 
 ## 3. `static/style.css`
 - **Objective:** Style the different game views and UI elements.
@@ -30,9 +31,10 @@
     - **New:** Styles for the player piece (`.player-piece`).
     - Styles for the `#turn-indicator` (already implemented).
     - Basic styling for `#roll-dice-button` to make it visually distinct.
+    - Basic styling for the `#game-lines` SVG container if needed.
 
 ## 4. `static/script.js`
-- **Objective:** Manage UI transitions, initial game setup, and dice roll logic.
+- **Objective:** Manage UI transitions, initial game setup, dice roll logic, player movement, and snake/ladder logic.
 - **Content:**
     - A variable `playerPosition` will be added to track the player's current square, initialized to 1.
     - The `createBoard()` function will be modified. After creating the squares, it will create a `div` for the player piece, add a `.player-piece` class to it, and append it to the first square on the board.
@@ -57,6 +59,19 @@
                 - Append the `player-piece` to the new target square.
                 - Handle `playerPosition` exceeding 100: If `playerPosition` + `diceRoll` > 100, the player remains at the current `playerPosition`.
             - Call `movePlayer()` after updating `playerPosition`.
+    - Define a `SNAKES_AND_LADDERS` constant (e.g., a JavaScript array of objects) that maps starting squares to ending squares, and includes a `type` property (`'snake'` or `'ladder'`).
+    - Modify the `createBoard()` function:
+        - After creating the squares, iterate through `SNAKES_AND_LADDERS`.
+        - For each snake/ladder:
+            - Get the pixel coordinates (top-left corner, width, height) of the `start` and `end` squares.
+            - Create an SVG `<line>` element.
+            - Set its `x1`, `y1`, `x2`, `y2` attributes to connect the center of the start square to the center of the end square.
+            - Apply a `stroke` color (e.g., red for snakes, green for ladders) and `stroke-width`.
+            - Append the SVG element to the `#game-lines` SVG container.
+    - Modify the `rollDiceButton` event listener (or `movePlayer` function):
+        - After updating `playerPosition` based on the dice roll, check if the new `playerPosition` is a `start` square in `SNAKES_AND_LADDERS`.
+        - If it is, update `playerPosition` to the corresponding `end` square.
+        - Visually move the player piece to the new square (re-use `placePlayer` logic).
 
 ## 5. Testing Plan
 - **Manual Testing:**
@@ -71,6 +86,9 @@
     9. **Verify:** After rolling the dice, the player piece moves forward by the rolled number of squares.
     10. **Verify:** If the player is at square 98 and rolls a 2, the player piece lands exactly on square 100.
     11. **Verify:** If the player is at square 98 and rolls a 4, the player piece remains at square 98 (does not overshoot 100).
+    12. **Verify:** Snakes and ladders are visually represented on the board as lines connecting their start and end squares (e.g., red lines for snakes, green lines for ladders).
+    13. **Verify:** When landing on a snake's head, the player piece automatically moves to its tail.
+    14. **Verify:** When landing on a ladder's base, the player piece automatically moves to its top.
 - **Automated Testing:**
     - **UI Test (`test_game.py`):**
         - A new test will be added to `test_game.py`.
@@ -99,3 +117,18 @@
             - Assert `player-piece` is at square 100.
             - Simulate a dice roll that would overshoot 100 (e.g., 4).
             - Assert `player-piece` remains at the position before the roll (98 in this example).
+        - Add `test_snake_movement` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to a snake start square.
+            - Simulate a dice roll that lands on the snake start.
+            - Assert `player-piece` is at the snake end square.
+        - Add `test_ladder_movement` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to a ladder start square.
+            - Simulate a dice roll that lands on the ladder start.
+            - Assert `player-piece` is at the ladder end square.
+        - Add `test_snake_ladder_visual_representation` to:
+            - Navigate to game, click "Play".
+            - Assert that the `#game-lines` SVG element exists.
+            - Assert that the correct number of `<line>` elements are present within `#game-lines`.
+            - Assert that the `stroke` color of these lines corresponds to their type (snake/ladder).

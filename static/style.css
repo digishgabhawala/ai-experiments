@@ -21,6 +21,7 @@ body {
     width: 500px;
     height: 500px;
     border: 2px solid black;
+    position: relative;
 }
 
 .square {
@@ -54,4 +55,13 @@ body {
     padding: 10px 20px;
     font-size: 1.2em;
     cursor: pointer;
+}
+
+.game-lines-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }

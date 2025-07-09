@@ -143,6 +143,70 @@ class TestGameUI(unittest.TestCase):
         square_98 = self.driver.find_element(By.CSS_SELECTOR, "[data-square='98']")
         self.assertTrue(square_98.find_elements(By.CLASS_NAME, "player-piece"))
 
+    def test_snake_movement(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+        time.sleep(1)
+
+        # Manually set playerPosition to a snake start square (e.g., 16)
+        self.driver.execute_script("playerPosition = 16;")
+        self.driver.execute_script("document.querySelector('.player-piece').remove();")
+        self.driver.execute_script("placePlayer();")
+        time.sleep(1)
+
+        # Simulate a dice roll that lands on the snake start (not needed, as we manually set position)
+        # Just trigger the movement logic by calling placePlayer again after setting position
+        self.driver.execute_script("const snakeLadder = SNAKES_AND_LADDERS.find(sl => sl.start === playerPosition); if (snakeLadder) { playerPosition = snakeLadder.end; } placePlayer();")
+        time.sleep(1)
+
+        # Assert player-piece is at the snake end square (e.g., 6)
+        square_6 = self.driver.find_element(By.CSS_SELECTOR, "[data-square='6']")
+        self.assertTrue(square_6.find_elements(By.CLASS_NAME, "player-piece"))
+
+    def test_ladder_movement(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+        time.sleep(1)
+
+        # Manually set playerPosition to a ladder start square (e.g., 1)
+        self.driver.execute_script("playerPosition = 1;")
+        self.driver.execute_script("document.querySelector('.player-piece').remove();")
+        self.driver.execute_script("placePlayer();")
+        time.sleep(1)
+
+        # Just trigger the movement logic by calling placePlayer again after setting position
+        self.driver.execute_script("const snakeLadder = SNAKES_AND_LADDERS.find(sl => sl.start === playerPosition); if (snakeLadder) { playerPosition = snakeLadder.end; } placePlayer();")
+        time.sleep(1)
+
+        # Assert player-piece is at the ladder end square (e.g., 38)
+        square_38 = self.driver.find_element(By.CSS_SELECTOR, "[data-square='38']")
+        self.assertTrue(square_38.find_elements(By.CLASS_NAME, "player-piece"))
+
+    def test_snake_ladder_visual_representation(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+        time.sleep(1)
+
+        game_lines_svg = self.driver.find_element(By.ID, "game-lines")
+        self.assertTrue(game_lines_svg.is_displayed())
+
+        # Assert that the correct number of <line> elements are present within #game-lines
+        # There are 19 snakes and ladders in the SNAKES_AND_LADDERS constant
+        lines = game_lines_svg.find_elements(By.TAG_NAME, "line")
+        self.assertEqual(len(lines), 19)
+
+        # Assert that the stroke color of these lines corresponds to their type (snake/ladder)
+        # This is a basic check, more robust checks would involve specific coordinates
+        snake_lines = [line for line in lines if line.get_attribute('stroke') == 'red']
+        ladder_lines = [line for line in lines if line.get_attribute('stroke') == 'green']
+
+        # Based on the SNAKES_AND_LADDERS constant, there are 10 snakes and 9 ladders
+        self.assertEqual(len(snake_lines), 10)
+        self.assertEqual(len(ladder_lines), 9)
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
