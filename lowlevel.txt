@@ -50,6 +50,13 @@
         - Inside the event listener:
             - Generate a random integer between 1 and 6 (inclusive) to simulate a dice roll.
             - Update the `textContent` of the `#turn-indicator` to display the dice roll result (e.g., "You rolled a 5!").
+            - Update `playerPosition` by adding the `diceRoll`.
+            - Implement a `movePlayer()` function to:
+                - Remove the `player-piece` from its current square.
+                - Find the new target square based on `playerPosition`.
+                - Append the `player-piece` to the new target square.
+                - Handle `playerPosition` exceeding 100: If `playerPosition` + `diceRoll` > 100, the player remains at the current `playerPosition`.
+            - Call `movePlayer()` after updating `playerPosition`.
 
 ## 5. Testing Plan
 - **Manual Testing:**
@@ -61,6 +68,9 @@
     6. **Verify:** A distinct player piece (e.g., a colored circle) is visible on the first square of the board.
     7. **Verify:** A "Roll Dice" button is visible on the game screen.
     8. **Verify:** Clicking the "Roll Dice" button displays a random number between 1 and 6 in the turn indicator.
+    9. **Verify:** After rolling the dice, the player piece moves forward by the rolled number of squares.
+    10. **Verify:** If the player is at square 98 and rolls a 2, the player piece lands exactly on square 100.
+    11. **Verify:** If the player is at square 98 and rolls a 4, the player piece remains at square 98 (does not overshoot 100).
 - **Automated Testing:**
     - **UI Test (`test_game.py`):**
         - A new test will be added to `test_game.py`.
@@ -74,3 +84,18 @@
             - Navigate to the game and click the "Play" button.
             - Find the "Roll Dice" button and click it.
             - Assert that the `#turn-indicator` is displayed and its text content is a valid dice roll message (e.g., contains "You rolled a " and a number between 1 and 6).
+        - Add a new test case `test_player_movement_after_roll`.
+        - This test will:
+            - Navigate to game, click "Play".
+            - Click "Roll Dice".
+            - Get initial `playerPosition`.
+            - Simulate/read `diceRoll`.
+            - Calculate expected new position.
+            - Assert `player-piece` is in the expected new square.
+        - Add `test_player_movement_exact_win_rule` to:
+            - Navigate to game, click "Play".
+            - Manually set `playerPosition` to 98 (or a similar high value).
+            - Simulate a dice roll that would land exactly on 100 (e.g., 2).
+            - Assert `player-piece` is at square 100.
+            - Simulate a dice roll that would overshoot 100 (e.g., 4).
+            - Assert `player-piece` remains at the position before the roll (98 in this example).
