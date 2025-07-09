@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const welcomeScreen = document.getElementById('welcome-screen');
     const gameScreen = document.getElementById('game-screen');
+    const turnIndicator = document.getElementById('turn-indicator');
     const playButton = document.getElementById('play-button');
     const gameBoard = document.getElementById('game-board');
 
@@ -14,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             square.textContent = i;
             gameBoard.appendChild(square);
         }
-        placePlayer();
     }
 
     function placePlayer() {
@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     playButton.addEventListener('click', () => {
         welcomeScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
+        turnIndicator.textContent = "Your Turn";
+        placePlayer();
     });
 
     createBoard();

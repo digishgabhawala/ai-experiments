@@ -5,6 +5,8 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import main  # Assuming your main server script is named main.py
 
 class TestGameUI(unittest.TestCase):
@@ -16,7 +18,8 @@ class TestGameUI(unittest.TestCase):
         time.sleep(1)  # Give the server a moment to start
 
         options = Options()
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
+        options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
         cls.driver = webdriver.Chrome(options=options)
 
     def test_welcome_screen_and_transition(self):
@@ -50,11 +53,22 @@ class TestGameUI(unittest.TestCase):
         self.driver.get(f"http://localhost:{main.PORT}")
         play_button = self.driver.find_element(By.ID, "play-button")
         play_button.click()
+        time.sleep(1)
 
         first_square = self.driver.find_element(By.CSS_SELECTOR, "[data-square='1']")
         player_piece = first_square.find_element(By.CLASS_NAME, "player-piece")
-
         self.assertTrue(player_piece.is_displayed())
+
+    
+
+    def test_turn_indicator_display(self):
+        self.driver.get(f"http://localhost:{main.PORT}")
+        play_button = self.driver.find_element(By.ID, "play-button")
+        play_button.click()
+
+        turn_indicator = self.driver.find_element(By.ID, "turn-indicator")
+        self.assertTrue(turn_indicator.is_displayed())
+        self.assertEqual(turn_indicator.text, "Your Turn")
 
     @classmethod
     def tearDownClass(cls):
